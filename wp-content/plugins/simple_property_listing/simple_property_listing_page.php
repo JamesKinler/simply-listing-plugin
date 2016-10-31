@@ -47,24 +47,80 @@
     $bedroom = esc_html(get_post_meta(get_the_ID(), 'bedroom_input',true));
     $bathroom = esc_html(get_post_meta(get_the_ID(), 'bathroom_input', true));
     $sq_ft = esc_html(get_post_meta(get_the_ID(), 'sqft_input', true));
+    $price = esc_html(get_post_meta(get_the_ID(), 'price_input', true));
+    $map = get_post_meta(get_the_ID(), 'map', true);
+    $MLS = esc_html(get_post_meta(get_the_ID(), 'MLS_input', true));
+    $yearbuilt = esc_html(get_post_meta(get_the_ID(), 'yearbuilt_input', true));
+    $agent = esc_html(get_post_meta(get_the_ID(), 'agent_input', true));
+    $agent_number = esc_html(get_post_meta(get_the_ID(), 'agent_number_input', true));
+    $agent_email = esc_html(get_post_meta(get_the_ID(), 'agent_email_input', true));
 
 
-    if (isset($address, $state, $city, $zipcode)){
+
+    if(isset($address, $state, $city, $zipcode)){
       echo "<h1 class='address'>" . $address .  ',' . ' ' . $city . ',' . ' ' . $state . ' ' . $zipcode . "</h1>";
     }
 
-    if (isset($bedroom, $bathroom, $sq_ft)){
+    if(isset($bedroom, $bathroom, $sq_ft)){
       echo "<p class='feature'><strong>" . $bedroom . ' ' . 'Bedroom' . ' - ' . $bathroom . ' ' . 'Baths' . ' - ' . $sq_ft . ' ' . 'Sq Ft' . "</strong></p>";
     }
+
+    if(isset($MLS, $yearbuilt)){
+      echo '<p>' . 'MLS#' . ' ' . $MLS . ' ' . ' - ' . 'Year Built' . ' ' . $yearbuilt . '</p>';
+    }
+
     ?>
 
-      <div class="content__listings"><?php the_content();?></div>
+
+      <div class="content__listings">
+        <?php the_content();?>
+      </div>
+      <h1>Real Estate Agents Info</h1>
+      <?php
+        // if(isset($agent, $agent_number, $agent_email)){
+        //   echo '<p>' . 'Agent' . ' ' . $agent . ' - ' . ' Phone Number ' . ' ' . $agent_number . ' - ' . 'Agent Email' . ' '. $agent_email . '</p>';
+        // }
+        if(isset($agent_number)){
+          echo 'Phone Number' . ' ' . '<a hreft="tel:' . $agent_number .'">' . $agent_number . '</a>';
+        }
+      ?>
+    </div>
+    <div class="col-lg-3">
+
+      <h1 class="listing__type">
+        <?php $categories = get_the_category();
+          if ( ! empty( $categories ) ) {
+          echo esc_html( $categories[0]->name );
+        }
+        ?>
+    </h1>
+
+      <?php
+        if(isset($price)){
+          echo '<h1 class="price">' . $price . '</h1>';
+        }
+      ?>
 
 
     </div>
   </div>
 </div>
 
+<div class="container">
+  <div class="row">
+    <div class="col-lg-6">
+      <div class="map">
+        <?php
+        if(isset($map)){
+          echo $map;
+          echo wp_oembed_get($map);
+        }
+        ?>
+      </div>
+
+    </div>
+  </div>
+</div>
 
 
 <?php

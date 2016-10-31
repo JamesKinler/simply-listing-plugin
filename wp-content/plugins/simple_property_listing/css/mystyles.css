@@ -67,7 +67,7 @@ time, mark, audio, video {
   color: white;
   position: relative;
   top: 490px;
-  left: 50px;
+  left: 70px;
   outline: none;
 
 }
@@ -80,7 +80,7 @@ button.squish {
   border-radius: 4px;
   position: relative;
   top: 491px;
-  left: 60px;
+  left: 77px;
   outline: none;
 }
 
@@ -92,7 +92,7 @@ h1.address{
 
 
 p.feature{
-  font-size: 20px;
+  font-size: 17px;
   font-family: inherit;
 
 }
@@ -101,4 +101,30 @@ p.feature{
   font-size: 14px;
   padding: 15px 0;
   font-family: inherit;
+}
+
+.listing__type{
+  font-size: 18px;
+  padding: 35px 0 7px 0;
+}
+
+.price{
+  font-size: 28px;
+}
+
+.map{
+  position: relative;
+  height: 300px;
+  width: 400px;
+
+}
+
+.map iframe{
+  position: absolute;
+  height: 100% !important;
+  width: 100% !important;
+}
+
+.MoreInfo__Section{
+  padding: 15px 0;
 }

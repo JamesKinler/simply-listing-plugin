@@ -91,6 +91,10 @@ function my_admin(){
   'high');
 }
 
+
+
+
+
 function display_realestate_listings_metabox($realestate){
 
   //Retrieves or displays the nonce hidden form field.
@@ -100,9 +104,11 @@ function display_realestate_listings_metabox($realestate){
 
   $agent_number = esc_html(get_post_meta($realestate->ID, 'agent_number_input', true));
 
+  $agent_email = esc_html(get_post_meta($realestate->ID, 'agent_email_input', true));
+
   $address = esc_html(get_post_meta($realestate->ID, 'addresss_input', true));
 
-  $map = esc_textarea(get_post_meta($realestate->ID, 'map', true));
+  $map = esc_html(get_post_meta($realestate->ID, 'map', true));
 
   $sq_ft = esc_html(get_post_meta($realestate->ID, 'sqft_input', true));
 
@@ -135,13 +141,18 @@ function display_realestate_listings_metabox($realestate){
   </br>
   <input type="text" size="30" name="agent_number" value="<?php echo $agent_number; ?>">
   </br>
+  <label>Agents Email:</label>
+  </br>
+  <input type="text" name="agent_email" value="<?php echo $agent_email; ?>">
+  </br>
   <label>Address:</label>
   </br>
   <input type="text" size="30" name="address" value="<?php echo $address ?>">
   </br>
   <label>Map:</label>
   </br>
-  <textarea name="google_map" rows="3" cols="29"><?php  echo $map ?></textarea>
+
+  <textarea name="google_map" type="text" rows="3" cols="29"><?php  echo $map ?></textarea>
   </br>
   <label>Sq Ft:</label>
   </br>
@@ -195,6 +206,22 @@ function display_realestate_listings_metabox($realestate){
 
 add_action('save_post', 'add_property_detail_listings', 10,2);
 
+
+
+function allow_multisite_tags($multisite_tags){
+  $multisite_tags['iframe'] = [
+    'id' => true,
+    'src' => true,
+    'width' => true,
+    'height' => true,
+    'frameborder' => true,
+    'scrolling' => true
+  ];
+  return $multisite_tags;
+}
+
+add_filter('wp_kses_allowed_html', 'allow_multisite_tags');
+
 function add_property_detail_listings($realestate_id, $realestate){
     //checks the metabox nonce and then returns it
     if (!isset($_POST["meta-box-nonce"]) || !wp_verify_nonce($_POST["meta-box-nonce"], basename(__FILE__)))
@@ -223,6 +250,13 @@ function add_property_detail_listings($realestate_id, $realestate){
       // Then We Update The Post Meta
       update_post_meta($realestate_id, 'agent_number_input', $mydata);
     }
+    //We are going to save the data of the Agent Email Input and Sanitize it
+    if(isset($_POST['agent_email']) && $_POST['agent_email'] != ''){
+      //This Santize The Input Text Field
+      $mydata = sanitize_text_field($_POST['agent_email']);
+      // Then We Update The Post Meta
+      update_post_meta($realestate_id, 'agent_email_input', $mydata);
+    }
     //We Are Going To Save The Data Of The Address Input and Sanitize it
     if(isset($_POST['address']) && $_POST['address'] != ''){
       // This Santizes The Input Text Field
@@ -235,7 +269,7 @@ function add_property_detail_listings($realestate_id, $realestate){
       // This Santizes The Input Text Field
       $mydata = sanitize_text_field($_POST['google_map']);
       // Then We Update The Post Meta
-      update_post_meta($realestate_id, 'map',  $mydata);
+      update_post_meta($realestate_id, 'map', $_POST['google_map'], $mydata);
     }
     //We Are Going To Save The Data Of The Sq Ft. Input and Sanitize it
     if(isset($_POST['sq_ft']) && $_POST['sq_ft'] != ''){

@@ -7,5 +7,5 @@
 </head>
 
 <header>
-  <img src="http://hdwallpaper.info/wp-content/uploads/2016/04/hot-chicks-desktop-wallpaper.jpg" alt="" />
+  <img src="http://s.hswstatic.com/gif/mansions-quiz-96546919.jpg" alt="" />
 </header>

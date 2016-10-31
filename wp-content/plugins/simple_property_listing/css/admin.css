@@ -1,0 +1,21 @@
+#realestate_listings_metabox{
+  clear: both;
+}
+.inside::after{
+  clear: both;
+}
+
+
+
+.first__column{
+  float: left;
+  margin-left: 40px;
+  margin-right: 90px;
+}
+
+
+
+
+.clear{
+  clear: both;
+}

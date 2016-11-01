@@ -128,3 +128,8 @@ p.feature{
 .MoreInfo__Section{
   padding: 15px 0;
 }
+
+.agent__info a{
+  text-decoration:none;
+  color: black;
+}

@@ -80,8 +80,8 @@
         // if(isset($agent, $agent_number, $agent_email)){
         //   echo '<p>' . 'Agent' . ' ' . $agent . ' - ' . ' Phone Number ' . ' ' . $agent_number . ' - ' . 'Agent Email' . ' '. $agent_email . '</p>';
         // }
-        if(isset($agent_number)){
-          echo 'Phone Number' . ' ' . '<a hreft="tel:' . $agent_number .'">' . $agent_number . '</a>';
+        if(isset($agent, $agent_number, $agent_email)){
+          echo '<p class="agent__info">' . 'Agent' . ' ' . $agent . ' ' . ' - ' . 'Phone Number' . ' ' . '<a href="tel:' . $agent_number .'">' . $agent_number . '</a>' . ' - ' . '<a href="mailto:' . $agent_email . '"> Contact Me'. '</p>';
         }
       ?>
     </div>

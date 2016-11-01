@@ -1,7 +1,7 @@
 <?php
 
 /*
-*Plugin Name: Simple Property Listing
+*Plugin Name: WP Simple Realty
 *Plugin URI: teammahout.com
 *Description: Easy to use real estate listing plugin. Lets you add galleries for your house and all the text information you need to list it
 *Version: 1.0

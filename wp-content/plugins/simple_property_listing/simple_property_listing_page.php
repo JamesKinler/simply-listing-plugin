@@ -22,6 +22,7 @@
 <?php if (have_posts()) : while (have_posts()) : the_post(); //start the loop ?>
 
 
+
 <div class="container-fluid">
   <div class="row no-gutter img_height">
       <?php $images = get_post_meta(get_the_ID(), 'vdw_gallery_id', true); ?>
@@ -75,43 +76,12 @@
       <div class="content__listings">
         <?php the_content();?>
       </div>
-      <h1>Real Estate Agents Info</h1>
+      <h1 class="agent__heading">Real Estate Agents Info</h1>
       <?php
         if(isset($agent, $agent_number, $agent_email)){
           echo '<p class="agent__info">' . 'Agent' . ' ' . $agent . ' ' . ' - ' . 'Phone Number' . ' ' . '<a href="tel:' . $agent_number .'">' . $agent_number . '</a>' . ' - ' . '<a href="mailto:' . $agent_email . '"> Contact Me </a> </p>';
         }
       ?>
-    </div>
-    <div class="col-lg-3">
-
-      <h1 class="listing__type">
-        <?php $categories = get_the_category();
-          if ( ! empty( $categories ) ) {
-          echo esc_html( $categories[0]->name );
-        }
-        ?>
-    </h1>
-
-      <?php
-        if(isset($price)){
-          echo '<h1 class="price">' . $price . '</h1>';
-        }
-      ?>
-      <p>
-        More Info
-        <p>
-          heating air ect.....
-        </p>
-      </p>
-
-
-    </div>
-  </div>
-</div>
-
-<div class="container">
-  <div class="row">
-    <div class="col-lg-6">
       <div class="map">
         <?php
         if(isset($map)){
@@ -122,8 +92,35 @@
       </div>
 
     </div>
+    <div class="col-lg-2">
+
+      <h1 class="listing__type">
+        <?php $categories = get_the_category();
+          if ( ! empty( $categories ) ) {
+          echo esc_html( $categories[0]->name );
+        }
+        ?>
+
+
+    </h1>
+
+      <?php
+        if(isset($price)){
+          echo '<h1 class="price">' . $price . '</h1>';
+        }
+      ?>
+      <h1 class="features"><strong>Features</strong></h1>
+        <?php echo get_the_tag_list('<p class="moreinfo__section">', ', ' , '</p>');?>
+
+
+    </div>
+    <div class="col-lg-4 sidebar">
+        <?php load_template ( dirname( __FILE__ ) . '/sidebar-home.php' ) ;?>
+    </div>
   </div>
 </div>
+
+
 
 
 <?php
@@ -131,8 +128,6 @@
 endwhile; endif; // End the loop
 
 ?>
-
-
 
 
 

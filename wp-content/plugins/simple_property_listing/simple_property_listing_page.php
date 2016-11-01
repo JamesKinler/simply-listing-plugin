@@ -77,11 +77,8 @@
       </div>
       <h1>Real Estate Agents Info</h1>
       <?php
-        // if(isset($agent, $agent_number, $agent_email)){
-        //   echo '<p>' . 'Agent' . ' ' . $agent . ' - ' . ' Phone Number ' . ' ' . $agent_number . ' - ' . 'Agent Email' . ' '. $agent_email . '</p>';
-        // }
         if(isset($agent, $agent_number, $agent_email)){
-          echo '<p class="agent__info">' . 'Agent' . ' ' . $agent . ' ' . ' - ' . 'Phone Number' . ' ' . '<a href="tel:' . $agent_number .'">' . $agent_number . '</a>' . ' - ' . '<a href="mailto:' . $agent_email . '"> Contact Me'. '</p>';
+          echo '<p class="agent__info">' . 'Agent' . ' ' . $agent . ' ' . ' - ' . 'Phone Number' . ' ' . '<a href="tel:' . $agent_number .'">' . $agent_number . '</a>' . ' - ' . '<a href="mailto:' . $agent_email . '"> Contact Me </a> </p>';
         }
       ?>
     </div>
@@ -100,6 +97,12 @@
           echo '<h1 class="price">' . $price . '</h1>';
         }
       ?>
+      <p>
+        More Info
+        <p>
+          heating air ect.....
+        </p>
+      </p>
 
 
     </div>

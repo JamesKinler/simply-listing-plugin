@@ -9,3 +9,15 @@ Tags: Realestate,HTML5,CSS3
 Version: 1
 
 */
+
+
+footer{
+  background: black;
+  height: 100px;
+  width: 100%;
+  color: white;
+}
+
+footer p{
+  padding: 20px 0;
+}

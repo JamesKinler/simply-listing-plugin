@@ -5,7 +5,8 @@
   $realestate_query = new Wp_Query([
     'post_type' => 'realestate_listings',
     'cat' => $custom_post_category,
-    'post_per_page' => 4,
+    'posts_per_page' => 4,
+    'orderby' => 'rand',
   ]);
 
   if ( $realestate_query->have_posts() ) :

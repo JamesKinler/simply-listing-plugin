@@ -108,9 +108,17 @@
         if(isset($price)){
           echo '<h1 class="price">' . $price . '</h1>';
         }
+
+        $terms = wp_get_post_terms($post->ID, 'features_tags', array("fields" => "all"));
+
+        if ($terms) {
+            echo '<h1 class="features"><strong>Features</strong></h1> ';
+            foreach ($terms as $term) {
+                echo '<a href="' . get_option('siteurl') . '/' . $term->slug . '" title="' . sprintf( __( "Learn more about the %s" ), $term->name ) . '"' . '>' . $term->name.'</a><br />
+        ';
+                }
+      }
       ?>
-      <h1 class="features"><strong>Features</strong></h1>
-        <?php echo get_the_tag_list('<p class="moreinfo__section">', ', ' , '</p>');?>
 
 
     </div>

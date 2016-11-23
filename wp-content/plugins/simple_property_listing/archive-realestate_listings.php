@@ -8,13 +8,7 @@
 
 <?php
 
-// adds custom pagantatnion
 
-
-
-
-
-//ends custom pagantatnion
 
 
 if (have_posts() ) : while (have_posts() ) : the_post(); //start the loop

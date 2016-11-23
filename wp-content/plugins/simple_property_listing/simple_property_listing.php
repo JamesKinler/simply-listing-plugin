@@ -468,4 +468,89 @@ function custom_post_type_tags( $tags ) {
 add_action( 'pre_get_posts', 'custom_post_type_tags' );
 
 
+function simple_property_listing_shortcode($atts){
+
+
+  $output ='';
+
+  $custom_loop_atts = shortcode_atts([
+    'number_of_posts' => 1,
+    'type' => 'realestate_listings'
+  ],$atts);
+
+
+  $post_type = $custom_loop_atts['type'];
+  $number_of_posts = $custom_loop_atts['number_of_posts'];
+
+
+  $args = [
+    'post_type' => $post_type,
+    'post_status' => 'publish',
+    'order' => 'date',
+    'posts_per_page' => $number_of_posts,
+  ];
+
+  $shortcode_query = new WP_Query($args);
+
+
+  $output .= '<div class="container archive__container">';
+    $output .= '<div class="row">';
+
+
+
+
+  while($shortcode_query->have_posts()) : $shortcode_query->the_post();
+  $post_id = get_the_ID();
+    $output .= '<a href=';
+    $output .= get_the_permalink();
+    $output .= '>';
+      $output .= '<div class="col-lg-4">';
+        $output .= '<div class="container__border">';
+          $output .= '<div class="row">';
+            $output .= '<div class="col-sm-5 img_heigth">';
+              $output .= get_the_post_thumbnail($post_id, 'medium', ['class' => 'img-responsive']);
+            $output .= '</div>';
+            $output .= '<div class="col-xs-6 archive__info">';
+              $output .= '<h1>';
+                $output .= '<strong>';
+                  $output .= get_the_title();
+                $output .= '</strong>';
+              $output .= '</h1>';
+              $output .= '<p>';
+                $output .= esc_html(get_post_meta($post_id, 'addresss_input', true));
+                $output .= ', ';
+                $output .= esc_html(get_post_meta($post_id,'city_input',true));
+                $output .=', ';
+                $output .= esc_html(get_post_meta($post_id, 'state_input',true));
+                $output .= ' ';
+                $output .= esc_html(get_post_meta($post_id, 'zipcode_input', true));
+              $output .= '</p>';
+              $output .= '<p>';
+                $output .= esc_html(get_post_meta($post_id, 'price_input', true));
+              $output .= '</p>';
+              $output .= '<p>';
+                $output .= 'bd ';
+                $output .= esc_html(get_post_meta($post_id, 'bedroom_input', true));
+                $output .= ' ';
+                $output .= 'ba ';
+                $output .= esc_html(get_post_meta($post_id, 'bathroom_input', true));
+              $output .= '</p>';
+            $output .= '</div>';
+          $output .= '</div>';
+        $output .= '</div>';
+      $output .= '</div>';
+    $output .= '</a>';
+  endwhile;
+
+  $output .= '</div>';
+$output .= '</div>';
+  return $output;
+  wp_reset_postdata();
+
+
+
+}
+
+add_shortcode('listings', 'simple_property_listing_shortcode');
+
 ?>

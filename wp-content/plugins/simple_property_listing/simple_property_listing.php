@@ -22,7 +22,7 @@ foreach ($images as $image) {
 
 $images = get_post_meta($realestate->ID, 'vdw_gallery_id', true);
 
-
+// adding custom post type
 add_action('init', 'jk_listing');
 
 function jk_listing(){
@@ -49,23 +49,26 @@ function jk_listing(){
     'supports' => [
       'title', 'editor', 'thumbnail'
     ],
-    'taxonomies' => ['category', 'post_tag'],
+    'taxonomies' => ['property_types', 'features_tags'],
   ]);
 }
 
+// this adds a custom category;
+
+add_action('init', 'listings_taxonomy', 0);
 
 function listings_taxonomy(){
   $labels = [
-    'name' => 'Listing Categories',
-    'singular_name' => 'Category',
-    'search_items' => 'Search Categories',
+    'name' => 'Listing Property Types',
+    'singular_name' => 'Property Type',
+    'search_items' => 'Search Property Types',
     'all_items' => 'All Categories',
-    'parent_item_colon' => 'Parent Categories',
-    'edit_item' => 'Edit Categories',
-    'update_item' => 'Update Categories',
-    'add_new_item' => 'Add New Category',
-    'new_item_name' => 'New Name Category',
-    'menu_name' => 'Categories',
+    'parent_item_colon' => 'Parent Property Types',
+    'edit_item' => 'Edit Property Types',
+    'update_item' => 'Update Property Types',
+    'add_new_item' => 'Add New Property Types',
+    'new_item_name' => 'New Name Property Types',
+    'menu_name' => 'Property Types',
   ];
 
   $args = [
@@ -76,9 +79,47 @@ function listings_taxonomy(){
     'query_var' => true,
   ];
 
-  register_taxonomy('category', 'realestate_listings', $args);
+  register_taxonomy('property_types', 'realestate_listings', $args);
 
 }
+
+
+//custom taxonomies for tidy_diagnose
+
+add_action('init', 'custom_tag_taxonomy', 0);
+
+function custom_tag_taxonomy(){
+  $labels = [
+    'name' => 'Features',
+    'singular_name' => 'Feature',
+    'search_items' =>  'Search Features',
+    'popular_items' => 'Popular Features',
+    'all_items' => 'All Features',
+    'parent_item' => null,
+    'parent_item_colon' => null,
+    'edit_item' => 'Edit Features',
+    'update_item' => 'Update Features',
+    'add_new_item' => 'Add New Features',
+    'new_item_name' => 'New Feature Name',
+    'separate_items_with_commas' => 'Separate Features with commas',
+    'add_or_remove_items' => 'Add or remove Features',
+    'choose_from_most_used' => 'Choose from the most used Features',
+    'menu_name' => 'Features',
+  ];
+
+  $args = [
+    'hierarchical' => false,
+    'labels' => $labels,
+    'update_count_callback' => '_update_post_term_count',
+    'query_var' => true,
+    'rewrite' => ['slug' => 'Features'],
+  ];
+
+  register_taxonomy('features_tags',['realestate_listings'], $args);
+
+}
+
+// meta box for inputs
 
 add_action('admin_init', 'my_admin');
 
@@ -406,5 +447,110 @@ function include_archive_template_function($template_path){
   }
   return $template_path;
 }
+
+// this lets me display 9 items on the archive page
+
+function custom_type_archive_display($query) {
+    if (is_post_type_archive('realestate_listings')) {
+        $query->set('posts_per_page',9);
+        return;
+    }
+}
+
+add_action('pre_get_posts', 'custom_type_archive_display');
+
+// this lets me query over the custom tags taxonomies
+function custom_post_type_tags( $tags ) {
+    if ( !is_admin() && $tags->is_tag() && $tags->is_main_query() ) {
+        $tags->set( 'realestate_listings', [ 'post', 'Features_tags' ] );
+    }
+}
+add_action( 'pre_get_posts', 'custom_post_type_tags' );
+
+
+function simple_property_listing_shortcode($atts){
+
+
+  $output ='';
+
+  $custom_loop_atts = shortcode_atts([
+    'number_of_posts' => 1,
+    'type' => 'realestate_listings'
+  ],$atts);
+
+
+  $post_type = $custom_loop_atts['type'];
+  $number_of_posts = $custom_loop_atts['number_of_posts'];
+
+
+  $args = [
+    'post_type' => $post_type,
+    'post_status' => 'publish',
+    'order' => 'date',
+    'posts_per_page' => $number_of_posts,
+  ];
+
+  $shortcode_query = new WP_Query($args);
+
+
+  $output .= '<div class="container archive__container">';
+    $output .= '<div class="row">';
+
+
+
+
+  while($shortcode_query->have_posts()) : $shortcode_query->the_post();
+  $post_id = get_the_ID();
+    $output .= '<a href=';
+    $output .= get_the_permalink();
+    $output .= '>';
+      $output .= '<div class="col-lg-4">';
+        $output .= '<div class="container__border">';
+          $output .= '<div class="row">';
+            $output .= '<div class="col-sm-5 img_heigth">';
+              $output .= get_the_post_thumbnail($post_id, 'medium', ['class' => 'img-responsive']);
+            $output .= '</div>';
+            $output .= '<div class="col-xs-6 archive__info">';
+              $output .= '<h1>';
+                $output .= '<strong>';
+                  $output .= get_the_title();
+                $output .= '</strong>';
+              $output .= '</h1>';
+              $output .= '<p>';
+                $output .= esc_html(get_post_meta($post_id, 'addresss_input', true));
+                $output .= ', ';
+                $output .= esc_html(get_post_meta($post_id,'city_input',true));
+                $output .=', ';
+                $output .= esc_html(get_post_meta($post_id, 'state_input',true));
+                $output .= ' ';
+                $output .= esc_html(get_post_meta($post_id, 'zipcode_input', true));
+              $output .= '</p>';
+              $output .= '<p>';
+                $output .= esc_html(get_post_meta($post_id, 'price_input', true));
+              $output .= '</p>';
+              $output .= '<p>';
+                $output .= 'bd ';
+                $output .= esc_html(get_post_meta($post_id, 'bedroom_input', true));
+                $output .= ' ';
+                $output .= 'ba ';
+                $output .= esc_html(get_post_meta($post_id, 'bathroom_input', true));
+              $output .= '</p>';
+            $output .= '</div>';
+          $output .= '</div>';
+        $output .= '</div>';
+      $output .= '</div>';
+    $output .= '</a>';
+  endwhile;
+
+  $output .= '</div>';
+$output .= '</div>';
+  return $output;
+  wp_reset_postdata();
+
+
+
+}
+
+add_shortcode('listings', 'simple_property_listing_shortcode');
 
 ?>

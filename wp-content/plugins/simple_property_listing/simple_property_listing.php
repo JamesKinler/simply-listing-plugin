@@ -124,10 +124,10 @@ function custom_tag_taxonomy(){
 add_action('admin_init', 'my_admin');
 
 function my_admin(){
-  add_meta_box('realestate_listings_metabox',
-  'Property Details',
-  'display_realestate_listings_metabox',
-  'realestate_listings',
+  add_meta_box('realestate_listings_metabox', //name of meta box
+  'Property Details', // label of meta box
+  'display_realestate_listings_metabox', // function name
+  'realestate_listings', // post type
   'normal',
   'high');
 }
@@ -553,4 +553,137 @@ $output .= '</div>';
 
 add_shortcode('listings', 'simple_property_listing_shortcode');
 
+// adding a widget area
+
+function realestate_widget_init(){
+  register_sidebar([
+    // This is the name of the widget
+    'name' => 'Front Page Widget',
+    // the id of the widget, just the name of the widget lowercase and underscore
+    'id' => 'front_page_widget',
+    // this is the html code that is going to wrap your widget before
+    'before_widget'=>'<section>',
+    // this is going to be the code that wraps the end of your widget
+    'after_widget' => '</section>',
+    // this whats going to wrap your title of your widget
+    'before_title' => '<h1>',
+    // this is whats going to wrap at the end of the widget
+    'after_title' => '</h1>',
+  ]);
+}
+
+add_action('widgets_init', 'realestate_widget_init');
+
+
+// Creating the widget
+class wp_simpley_realestate extends WP_Widget {
+  public function __construct(){
+    parent::__construct(
+      'simpley_realestate_widget', //Base ID
+      'Simpley Realesate Widget', //name
+      ['description' => __('Displays your latest listings')]
+    );
+  }
+
+  //this is the form inputs for the widgets
+  public function form($instance){
+    if($instance){
+      $numberOfListings = esc_attr($instance['numberOfListings']);
+      $imagecheckbox = esc_attr($instance['ImagecheckBox']);
+    }else{
+      $numberOfListings = '';
+      $imagecheckbox = '';
+      $textarea = '';
+    }
+    // below is the input forms for the widget to change the instance
+    ?>
+  <p>
+    <label for="<?php echo $this->get_field_id('numberOfListings'); ?>"><?php _e('Number of Listings:', 'simpley_realestate_widget'); ?></label>
+    <select id="<?php echo $this->get_field_id('numberOfListings'); ?>"  name="<?php echo $this->get_field_name('numberOfListings'); ?>">
+			<?php for($x=1;$x<=10;$x++): ?>
+			<option <?php echo $x == $numberOfListings ? 'selected="selected"' : '';?> value="<?php echo $x;?>"><?php echo $x; ?></option>
+			<?php endfor;?>
+		</select>
+    </br>
+    <label for="<?php echo $this->get_field_id('ImagecheckBox'); ?>"><?php _e(' Check the box if you want the image to be displayed:', 'simpley_realestate_widget')?></label>
+    <input id="<?php echo $this->get_field_id('ImagecheckBox'); ?>" name="<?php echo esc_attr($this->get_field_name('ImagecheckBox'));?>" type="checkbox" value="1" <?php checked('1', $imagecheckbox); ?>/>
+  </p>
+  <?php
+  }
+  //This function is about updating the widget when adding a new instance
+  public function update($new_instance, $old_instance) {
+  	$instance = $old_instance;
+  	$instance['numberOfListings'] = strip_tags($new_instance['numberOfListings']);
+    $instance['ImagecheckBox'] = strip_tags($new_instance['ImagecheckBox']);
+  	return $instance;
+  }
+  // This is outputing everything in the widget
+  public function widget($args,$instance){
+
+      $numberOfListings = $instance['numberOfListings'];
+        $query_args = [
+          'post_type' => 'realestate_listings',
+          'posts_per_page' => $numberOfListings,
+          'order' => 'date'
+        ];
+        ?>
+      <div class="container archive__container">
+        <div class="row">
+        <?php
+        $widget_query = new WP_Query($query_args);
+        while($widget_query->have_posts()) : $widget_query->the_post();
+        //Sets a instance to turn the images off and on
+        $imagecheckbox = $instance['ImagecheckBox'];
+
+        //these are the meta vaules from the meta box
+        $address = esc_html(get_post_meta(get_the_ID(), 'addresss_input',true));
+        $state = esc_html(get_post_meta(get_the_ID(), 'state_input',true));
+        $city = esc_html(get_post_meta(get_the_ID(), 'city_input', true));
+        $zipcode = esc_html(get_post_meta(get_the_ID(), 'zipcode_input', true));
+        $price = esc_html(get_post_meta(get_the_ID(), 'price_input',true));
+        $bedroom = esc_html(get_post_meta(get_the_ID(), 'bedroom_input',true));
+        $bathroom = esc_html(get_post_meta(get_the_ID(), 'bathroom_input', true));
+        ?>
+        <a href="<?php the_permalink(); ?>">
+        <div class="col-lg-4">
+          <div class="container__border">
+            <div class="row">
+              <div class="col-sm-5 img_heigth">
+                <?php
+                if($imagecheckbox AND $imagecheckbox == '1'){
+                  the_post_thumbnail('medium', ['class' => 'img-responsive']);
+                }
+                  ?>
+              </div>
+              <div class="col-xs-6 archive__info">
+                <h1><strong><?php the_title(); ?></strong></h1>
+                <?php if(isset($address, $city, $state, $zipcode)){
+                  echo '<p>' . $address . ', ' . ' ' . $city . ',' . ' ' . $state . ' ' . $zipcode .  '</p>';
+                }
+                if(isset($price)){
+                  echo '<p>' . $price .  '</p>';
+                }
+                if(isset($bedroom, $bathroom)){
+                  echo '<p>' . 'bd' . ' ' . $bedroom  . ' ' . 'ba' . ' ' . $bathroom . '</p>';
+                }
+
+                ?>
+              </div>
+            </div>
+          </div>
+        </div>
+      </a>
+
+
+  <?php endwhile; ?>
+      </div>
+    </div>
+    <?php
+  }
+
+}
+
+add_action('widgets_init', function(){
+  register_widget('wp_simpley_realestate');
+});
 ?>

@@ -383,6 +383,18 @@ function add_property_detail_listings($realestate_id, $realestate){
 
 }
 
+function jk_excerpt_length( $length) {
+        return 20;
+    }
+    add_filter( 'excerpt_length', 'jk_excerpt_length', 999 );
+
+
+
+    function jk_excerpt_more( $more ) {
+      return ' .....';
+  }
+  add_filter( 'excerpt_more', 'jk_excerpt_more' );
+
 // this is the styles for the plugin
 
 function myplugin_styles(){
@@ -400,6 +412,12 @@ add_action( 'wp_enqueue_scripts', 'myplugin_styles' );
 function myplugin_scripts(){
   wp_register_script( 'my_js', plugin_dir_url(__FILE__) . '/js/myjs.js', array('jquery'), '', true);
   wp_enqueue_script( 'my_js');
+
+  wp_register_script('matchHeigth', plugin_dir_url(__FILE__) . '/js/jquery.matchHeight.js',array('jquery'), '',true);
+  wp_enqueue_script('matchHeigth');
+
+  wp_register_script('chosen', plugin_dir_url(__FILE__) . '/js/chosen.proto.js', array('jquery'), '', true);
+  wp_enqueue_script('chosen');
 }
 
 
@@ -590,14 +608,40 @@ class wp_simpley_realestate extends WP_Widget {
     if($instance){
       $numberOfListings = esc_attr($instance['numberOfListings']);
       $imagecheckbox = esc_attr($instance['ImagecheckBox']);
+      $theTitle = esc_attr($instance['headerCheckbox']);
+      $street = esc_attr($instance['streetCheckbox']);
+      $price = esc_attr($instance['priceCheckbox']);
+      $rooms = esc_attr($instance['roomCheckbox']);
+      $theExcerpt = esc_attr($instance['excerptCheckbox']);
+      $category = esc_attr($instance['property_types']);
+
+
+
     }else{
       $numberOfListings = '';
       $imagecheckbox = '';
-      $textarea = '';
+      $theTitle = '';
+      $street = '';
+      $price = '';
+      $rooms = '';
+      $theExcerpt = '';
+      $category = '';
     }
-    // below is the input forms for the widget to change the instance
     ?>
   <p>
+
+
+
+    <label for="<?php echo $this->get_field_id('property_types'); ?>"><?php _e('Select What Categories you want to display:', 'simpley_realestate_widget'); ?></label>
+    <?php wp_dropdown_categories( array(
+      'taxonomy' => 'property_types',
+      'show_option_none' =>' ',
+      'name' => $this->get_field_name( 'property_types' ), 'selected' => $category ) ); ?>
+    </br>
+    </br>
+
+
+      <!-- you can choose how many posts you want to show -->
     <label for="<?php echo $this->get_field_id('numberOfListings'); ?>"><?php _e('Number of Listings:', 'simpley_realestate_widget'); ?></label>
     <select id="<?php echo $this->get_field_id('numberOfListings'); ?>"  name="<?php echo $this->get_field_name('numberOfListings'); ?>">
 			<?php for($x=1;$x<=10;$x++): ?>
@@ -605,8 +649,44 @@ class wp_simpley_realestate extends WP_Widget {
 			<?php endfor;?>
 		</select>
     </br>
+    </br>
+
+    <!-- this is the label input checkbox for image to be displayed if checked it will display the image -->
     <label for="<?php echo $this->get_field_id('ImagecheckBox'); ?>"><?php _e(' Check the box if you want the image to be displayed:', 'simpley_realestate_widget')?></label>
     <input id="<?php echo $this->get_field_id('ImagecheckBox'); ?>" name="<?php echo esc_attr($this->get_field_name('ImagecheckBox'));?>" type="checkbox" value="1" <?php checked('1', $imagecheckbox); ?>/>
+    </br>
+    </br>
+
+    <!-- this is the label input checkbox for the title of the listing to be displayed if checked it will display the image -->
+    <label for="<?php echo $this->get_field_id('headerCheckbox'); ?>"><?php _e(' Check the box if you want the title to be displayed:', 'simpley_realestate_widget')?></label>
+    <input id="<?php echo $this->get_field_id('headerCheckbox'); ?>" name="<?php echo esc_attr($this->get_field_name('headerCheckbox'));?>" type="checkbox" value="1" <?php checked('1', $theTitle); ?>/>
+    </br>
+    </br>
+
+    <!-- this is the label input checkbox for street to be displayed if checked it will display the image -->
+    <label for="<?php echo $this->get_field_id('streetCheckbox'); ?>"><?php _e(' Check the box if you want the address to be displayed:', 'simpley_realestate_widget')?></label>
+    <input id="<?php echo $this->get_field_id('streetCheckbox'); ?>" name="<?php echo esc_attr($this->get_field_name('streetCheckbox'));?>" type="checkbox" value="1" <?php checked('1', $street); ?>/>
+    </br>
+    </br>
+
+    <!-- this is the label input checkbox for price to be displayed if checked it will display the image -->
+    <label for="<?php echo $this->get_field_id('priceCheckbox'); ?>"><?php _e(' Check the box if you want the price to be displayed:', 'simpley_realestate_widget')?></label>
+    <input id="<?php echo $this->get_field_id('priceCheckbox'); ?>" name="<?php echo esc_attr($this->get_field_name('priceCheckbox'));?>" type="checkbox" value="1" <?php checked('1', $price); ?>/>
+    </br>
+    </br>
+
+    <!-- this is the label input checkbox for bedroom and bathroom to be displayed if checked it will display the image -->
+    <label for="<?php echo $this->get_field_id('roomCheckbox'); ?>"><?php _e(' Check the box if you want the bedroom and bathrooms to be displayed:', 'simpley_realestate_widget')?></label>
+    <input id="<?php echo $this->get_field_id('roomCheckbox'); ?>" name="<?php echo esc_attr($this->get_field_name('roomCheckbox'));?>" type="checkbox" value="1" <?php checked('1', $rooms); ?>/>
+    </br>
+    </br>
+
+    <!-- this is the label input checkbox for excerpt to be displayed if checked it will display the image -->
+    <label for="<?php echo $this->get_field_id('excerptCheckbox'); ?>"><?php _e(' Check the box if you want an excpert to be displayed:', 'simpley_realestate_widget')?></label>
+    <input id="<?php echo $this->get_field_id('excerptCheckbox'); ?>" name="<?php echo esc_attr($this->get_field_name('excerptCheckbox'));?>" type="checkbox" value="1" <?php checked('1', $theExcerpt); ?>/>
+    </br>
+    </br>
+
   </p>
   <?php
   }
@@ -615,25 +695,39 @@ class wp_simpley_realestate extends WP_Widget {
   	$instance = $old_instance;
   	$instance['numberOfListings'] = strip_tags($new_instance['numberOfListings']);
     $instance['ImagecheckBox'] = strip_tags($new_instance['ImagecheckBox']);
+    $instance['headerCheckbox'] = strip_tags($new_instance['headerCheckbox']);
+    $instance['streetCheckbox'] = strip_tags($new_instance['streetCheckbox']);
+    $instance['priceCheckbox'] = strip_tags($new_instance['priceCheckbox']);
+    $instance['roomCheckbox'] = strip_tags($new_instance['roomCheckbox']);
+    $instance['excerptCheckbox'] = strip_tags($new_instance['excerptCheckbox']);
+    $instance['property_types'] = strip_tags($new_instance['property_types']);
   	return $instance;
   }
   // This is outputing everything in the widget
   public function widget($args,$instance){
 
       $numberOfListings = $instance['numberOfListings'];
+      $category = $instance['property_types'];
+
         $query_args = [
           'post_type' => 'realestate_listings',
           'posts_per_page' => $numberOfListings,
-          'order' => 'date'
+          'order' => 'date',
+          'cat' => $category,
         ];
         ?>
       <div class="container archive__container">
-        <div class="row">
+        <div class="row flex-row">
         <?php
         $widget_query = new WP_Query($query_args);
         while($widget_query->have_posts()) : $widget_query->the_post();
-        //Sets a instance to turn the images off and on
+        //Sets a instance to turn off and on
         $imagecheckbox = $instance['ImagecheckBox'];
+        $theTitle = $instance['headerCheckbox'];
+        $street = $instance['streetCheckbox'];
+        $price = $instance['priceCheckbox'];
+        $room = $instance['roomCheckbox'];
+        $theExcerpt = $instance['excerptCheckbox'];
 
         //these are the meta vaules from the meta box
         $address = esc_html(get_post_meta(get_the_ID(), 'addresss_input',true));
@@ -648,33 +742,48 @@ class wp_simpley_realestate extends WP_Widget {
         <div class="col-lg-4">
           <div class="container__border">
             <div class="row">
+              <?php
+              if($imagecheckbox == '1'){
+                ?>
               <div class="col-sm-5 img_heigth">
-                <?php
-                if($imagecheckbox AND $imagecheckbox == '1'){
-                  the_post_thumbnail('medium', ['class' => 'img-responsive']);
-                }
-                  ?>
+                  <?php the_post_thumbnail('medium', ['class' => 'img-responsive']); ?>
               </div>
-              <div class="col-xs-6 archive__info">
+              <?php
+            }
+              ?>
+              <div class="archive__info col-xs-6 empty">
+                <?php if($theTitle == '1'){?>
                 <h1><strong><?php the_title(); ?></strong></h1>
-                <?php if(isset($address, $city, $state, $zipcode)){
-                  echo '<p>' . $address . ', ' . ' ' . $city . ',' . ' ' . $state . ' ' . $zipcode .  '</p>';
+                <?php } ?>
+
+                <?php
+                if($street == '1'){
+                  if(isset($address, $city, $state, $zipcode)){
+                    echo '<p>' . $address . ', ' . ' ' . $city . ',' . ' ' . $state . ' ' . $zipcode .  '</p>';
+                  }
                 }
-                if(isset($price)){
-                  echo '<p>' . $price .  '</p>';
+                if($price == '1'){
+                  if(isset($price)){
+                    echo '<p>' . $price .  '</p>';
+                  }
                 }
-                if(isset($bedroom, $bathroom)){
-                  echo '<p>' . 'bd' . ' ' . $bedroom  . ' ' . 'ba' . ' ' . $bathroom . '</p>';
+                if($room == '1'){
+                  if(isset($bedroom, $bathroom)){
+                    echo '<p>' . 'bd' . ' ' . $bedroom  . ' ' . 'ba' . ' ' . $bathroom . '</p>';
+                  }
                 }
 
                 ?>
               </div>
+              <?php if($theExcerpt == '1'){?>
+              <div class="col-sm-12 box">
+                  <?php the_excerpt();?>
+              </div>
+              <?php } ?>
             </div>
           </div>
         </div>
       </a>
-
-
   <?php endwhile; ?>
       </div>
     </div>

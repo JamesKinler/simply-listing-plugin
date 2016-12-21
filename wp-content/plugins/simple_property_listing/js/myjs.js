@@ -51,6 +51,26 @@ $('.squish').toggle(function(){
   })
 });
 
+//checking if my col is empty
+function isEmpty( el ){
+    return !$.trim(el.html())
+}
+if (isEmpty($('.empty'))) {
+    // do something
+    $('.empty').remove();
+    $('.img_heigth').removeClass('col-sm-5');
+    $('.img_heigth').addClass('col-sm-12');
+
+}
+
+$(function() {
+    $('.box').matchHeight();
+});
+
+// tell Chosen that a select has changed
+$('.my_select_box').trigger('chosen:updated');
+
+
 
 
 });

@@ -90,18 +90,14 @@
         }
         ?>
       </div>
-
     </div>
     <div class="col-lg-2">
-
       <h1 class="listing__type">
-        <?php $categories = get_the_category();
+        <?php $categories = wp_get_post_terms($post->ID, 'property_types', ['fields'=>'all']);
           if ( ! empty( $categories ) ) {
           echo esc_html( $categories[0]->name );
         }
         ?>
-
-
     </h1>
 
       <?php

@@ -1,10 +1,14 @@
 <?php
-  $category = get_the_category();
-  $custom_post_category = $category[0]->term_id;
+
+
+  $term_list = wp_get_post_terms($post->ID, 'property_types', array("fields" => "all"));
+  $custom_post_category = $term_list[0]->name;
+
+
 
   $realestate_query = new Wp_Query([
     'post_type' => 'realestate_listings',
-    'cat' => $custom_post_category,
+    'property_types' => $custom_post_category,
     'posts_per_page' => 4,
     'orderby' => 'rand',
   ]);

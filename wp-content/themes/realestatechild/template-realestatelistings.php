@@ -9,4 +9,7 @@
 <?php if(dynamic_sidebar('front_page_widget')) : else : endif?>
 
 
+
+
+
 <?php get_footer(); ?>

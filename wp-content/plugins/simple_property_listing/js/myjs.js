@@ -2,6 +2,7 @@
 
 $(document).ready(function () {
 
+
 // this button makes the thumbnail images hide and show
     $(".button").click(function(){
     $(".img_size").toggle();
@@ -67,13 +68,11 @@ $(function() {
     $('.box').matchHeight();
 });
 
-// tell Chosen that a select has changed
-$('.my_select_box').trigger('chosen:updated');
-
 
 
 
 });
+
 
 
 })( jQuery );

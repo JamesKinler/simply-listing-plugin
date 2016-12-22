@@ -410,18 +410,32 @@ add_action( 'wp_enqueue_scripts', 'myplugin_styles' );
 //this is the javescripts file for the plugin
 
 function myplugin_scripts(){
-  wp_register_script( 'my_js', plugin_dir_url(__FILE__) . '/js/myjs.js', array('jquery'), '', true);
-  wp_enqueue_script( 'my_js');
 
-  wp_register_script('matchHeigth', plugin_dir_url(__FILE__) . '/js/jquery.matchHeight.js',array('jquery'), '',true);
+  wp_register_script('matchHeigth', plugin_dir_url(__FILE__) . 'js/jquery.matchHeight.js',array('jquery'), '',true);
   wp_enqueue_script('matchHeigth');
 
-  wp_register_script('chosen', plugin_dir_url(__FILE__) . '/js/chosen.proto.js', array('jquery'), '', true);
-  wp_enqueue_script('chosen');
+
+
+  wp_register_script( 'my_js', plugin_dir_url(__FILE__) . 'js/myjs.js', array('jquery'), '', true);
+  wp_enqueue_script( 'my_js');
+
+
 }
-
-
 add_action( 'wp_enqueue_scripts', 'myplugin_scripts' );
+
+
+//this loads jquery into the admin panel
+
+function admin_script($hook) {
+  if ( 'widgets.php' == $hook || 'post.php' == $hook || 'post-new.php' == $hook ) {
+    wp_enqueue_script('chosen', plugin_dir_url(__FILE__) . 'js/chosen.jquery.js', array('jquery', 'jquery-ui-sortable'));
+
+    wp_enqueue_script('admin_js', plugin_dir_url(__FILE__) . 'js/admin.js', array('jquery', 'jquery-ui-sortable'));
+
+  }
+}
+add_action('admin_enqueue_scripts', 'admin_script');
+
 
 // This saves the styles.css style sheet for the admin plugin
 function myadmin_scripts(){
@@ -630,6 +644,11 @@ class wp_simpley_realestate extends WP_Widget {
     ?>
   <p>
 
+    <!-- <select data-placeholder="Your Favorite Football Team" style="width:350px;" class="chzn-select" multiple tabindex="6">
+    <option value=""></option>
+    <option value="United States">United States</option>
+    <option value="United Kingdom">United Kingdom</option>
+  </select> -->
 
 
     <label for="<?php echo $this->get_field_id('property_types'); ?>"><?php _e('Select What Categories you want to display:', 'simpley_realestate_widget'); ?></label>
@@ -708,12 +727,21 @@ class wp_simpley_realestate extends WP_Widget {
 
       $numberOfListings = $instance['numberOfListings'];
       $category = $instance['property_types'];
+      // print_r($category);
+      // die();
 
+
+      $custom_post_category = $term_list[0]->term_id;
         $query_args = [
           'post_type' => 'realestate_listings',
           'posts_per_page' => $numberOfListings,
           'order' => 'date',
-          'cat' => $category,
+          // 'tax_query' => [[
+          //   'taxonomy' => 'property_types',
+          //   'field' => 'id',
+          //   'terms' => $category,
+          //   ]]
+
         ];
         ?>
       <div class="container archive__container">

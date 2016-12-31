@@ -1,0 +1,66 @@
+.wpsr__house__features label{
+  display: block;
+}
+
+
+.wprs__accordion, .wprs__accordion * {
+    -webkit-box-sizing:border-box;
+    -moz-box-sizing:border-box;
+    box-sizing:border-box;
+}
+
+
+.wprs__accordion{
+  border-bottom:1px solid #beb9b9;
+  background-color:#ddd;
+  width:100%;
+  padding: 0px 20px;
+  transition:all linear 0.15s;
+}
+
+.wprs__accordion__title{
+  display:inline-block;
+  font-size:1.200em;
+  color:#000;
+  text-decoration: none;
+}
+
+.wprs__accordion__title:hover{
+  color: #000;
+}
+
+.wprs__accordion__section__content{
+  padding:0 15px;
+  display:none;
+}
+
+.wprs__top__action{
+  float: right;
+  position: relative;
+}
+
+.wprs__action__indicator{
+  box-shadow: none;
+  color: inherit;
+  outline: medium none;
+  text-decoration: none;
+}
+
+a.wprs__action__indicator:after{
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  border: 0 none;
+  background: none;
+  content: "\f140";
+  display: block;
+  font: normal 20px/1 dashicons;
+  margin-top: 17px;
+  margin-right: 0px;
+  padding: 1px 2px 1px 0px;
+  position: relative;
+  right: 0;
+  speak: none;
+  text-align: center;
+  text-decoration: none !important;
+  text-indent: 0;
+}

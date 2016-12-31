@@ -401,6 +401,8 @@ function myplugin_styles(){
 
     wp_enqueue_style('bootstrap', plugin_dir_url(__FILE__) . 'css/bootstrap.css', [], '1.0', 'all');
 
+    wp_enqueue_style('chosen', plugin_dir_url(__FILE__) . 'css/chosen.css', [], '1.0', 'all');
+
     wp_enqueue_style('mystyles', plugin_dir_url(__FILE__) . 'css/mystyles.css', [], '1.0', 'all');
 
 }
@@ -414,10 +416,12 @@ function myplugin_scripts(){
   wp_register_script('matchHeigth', plugin_dir_url(__FILE__) . 'js/jquery.matchHeight.js',array('jquery'), '',true);
   wp_enqueue_script('matchHeigth');
 
-
+  wp_register_script('chosen', plugin_dir_url(__FILE__) . 'js/chosen.jquery.js',array('jquery'), '',true);
+  wp_enqueue_script('chosen');
 
   wp_register_script( 'my_js', plugin_dir_url(__FILE__) . 'js/myjs.js', array('jquery'), '', true);
   wp_enqueue_script( 'my_js');
+
 
 
 }
@@ -428,9 +432,14 @@ add_action( 'wp_enqueue_scripts', 'myplugin_scripts' );
 
 function admin_script($hook) {
   if ( 'widgets.php' == $hook || 'post.php' == $hook || 'post-new.php' == $hook ) {
-    wp_enqueue_script('chosen', plugin_dir_url(__FILE__) . 'js/chosen.jquery.js', array('jquery', 'jquery-ui-sortable'));
 
-    wp_enqueue_script('admin_js', plugin_dir_url(__FILE__) . 'js/admin.js', array('jquery', 'jquery-ui-sortable'));
+    wp_enqueue_style('admin_widget', plugin_dir_url(__FILE__) . 'css/admin_widget.css', [], '1.0', 'all');
+
+    wp_register_script( 'admin_js', plugin_dir_url(__FILE__) . 'js/admin.js', array('jquery'), '', true);
+    wp_enqueue_script( 'admin_js');
+
+
+
 
   }
 }
@@ -627,7 +636,7 @@ class wp_simpley_realestate extends WP_Widget {
       $price = esc_attr($instance['priceCheckbox']);
       $rooms = esc_attr($instance['roomCheckbox']);
       $theExcerpt = esc_attr($instance['excerptCheckbox']);
-      $category = esc_attr($instance['property_types']);
+      $category = esc_attr($instance['category']);
 
 
 
@@ -643,27 +652,50 @@ class wp_simpley_realestate extends WP_Widget {
     }
     ?>
   <p>
+        <div class="wprs__accordion">
+    <div class="wprs__accordion__section">
+      <div class="wprs__top__action">
+        <a class="wprs__action__indicator"href="#"></a>
+      </div>
+      <!-- <div class="wprs__accordion__title" data-fieldset="hello">
+        <h4><a href="#hello">Home Filters</a></h4>
+      </div> -->
+      <h4><a href="#hello" class="wprs__accordion__title">Home Filters</a></h4>
 
-    <!-- <select data-placeholder="Your Favorite Football Team" style="width:350px;" class="chzn-select" multiple tabindex="6">
-    <option value=""></option>
-    <option value="United States">United States</option>
-    <option value="United Kingdom">United Kingdom</option>
-  </select> -->
+          <div id="hello"class="wprs__accordion__section__content">
 
 
-    <label for="<?php echo $this->get_field_id('property_types'); ?>"><?php _e('Select What Categories you want to display:', 'simpley_realestate_widget'); ?></label>
-    <?php wp_dropdown_categories( array(
-      'taxonomy' => 'property_types',
-      'show_option_none' =>' ',
-      'name' => $this->get_field_name( 'property_types' ), 'selected' => $category ) ); ?>
-    </br>
-    </br>
+                      <div class="wpsr__house__features">
+                          <?php
+                            $category = (isset($instance['category']) ? array_map('absint', $instance['category']) : ["0"]);
+                            $terms = get_terms([
+                              'taxonomy' => 'property_types',
+                              ]);
+                              foreach($terms as $term) :
+                          ?>
+                          <label for="<?php echo $this->get_field_id('category'. $term->term_id) ; ?>" >
+                          <input  type="checkbox"
+                              id="<?php echo $this->get_field_id('category' . $term->term_id); ?>"
+                              name="<?php echo $this->get_field_name('category' . '[]'); ?>"
+                              <?php   if (isset($term->term_id)) {
+                                          if (in_array($term->term_id,$category))
+                                              echo 'checked';
+                                          };
+                                      ?>
+                              value="<?php echo $term->term_id; ?>" />
+                              <?php echo $term->name ?>
+                          </label>
+                              <?php endforeach; ?>
+                        </div>
+        </div><!--end .accordion-section-content-->
+    </div><!--end .accordion-section-->
+</div><!--end .accordion-->
 
 
       <!-- you can choose how many posts you want to show -->
     <label for="<?php echo $this->get_field_id('numberOfListings'); ?>"><?php _e('Number of Listings:', 'simpley_realestate_widget'); ?></label>
     <select id="<?php echo $this->get_field_id('numberOfListings'); ?>"  name="<?php echo $this->get_field_name('numberOfListings'); ?>">
-			<?php for($x=1;$x<=10;$x++): ?>
+			<?php for($x='';$x<=10;$x++): ?>
 			<option <?php echo $x == $numberOfListings ? 'selected="selected"' : '';?> value="<?php echo $x;?>"><?php echo $x; ?></option>
 			<?php endfor;?>
 		</select>
@@ -719,28 +751,26 @@ class wp_simpley_realestate extends WP_Widget {
     $instance['priceCheckbox'] = strip_tags($new_instance['priceCheckbox']);
     $instance['roomCheckbox'] = strip_tags($new_instance['roomCheckbox']);
     $instance['excerptCheckbox'] = strip_tags($new_instance['excerptCheckbox']);
-    $instance['property_types'] = strip_tags($new_instance['property_types']);
+    $instance['category'] =  (isset($new_instance['category']) ? array_map( 'absint', $new_instance['category']) : ["0"]);
   	return $instance;
   }
   // This is outputing everything in the widget
   public function widget($args,$instance){
 
       $numberOfListings = $instance['numberOfListings'];
-      $category = $instance['property_types'];
-      // print_r($category);
-      // die();
-
+      $category = $instance['category'];
+      print_r($category);
 
       $custom_post_category = $term_list[0]->term_id;
         $query_args = [
           'post_type' => 'realestate_listings',
           'posts_per_page' => $numberOfListings,
           'order' => 'date',
-          // 'tax_query' => [[
-          //   'taxonomy' => 'property_types',
-          //   'field' => 'id',
-          //   'terms' => $category,
-          //   ]]
+          'tax_query' => [[
+            'taxonomy' => 'property_types',
+            'field' => 'id',
+            'terms' => $category,
+            ]]
 
         ];
         ?>
@@ -756,6 +786,7 @@ class wp_simpley_realestate extends WP_Widget {
         $price = $instance['priceCheckbox'];
         $room = $instance['roomCheckbox'];
         $theExcerpt = $instance['excerptCheckbox'];
+        $test = $instance['test'];
 
         //these are the meta vaules from the meta box
         $address = esc_html(get_post_meta(get_the_ID(), 'addresss_input',true));
@@ -810,6 +841,7 @@ class wp_simpley_realestate extends WP_Widget {
               <?php } ?>
             </div>
           </div>
+          <?php echo $test; ?>
         </div>
       </a>
   <?php endwhile; ?>

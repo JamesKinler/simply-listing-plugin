@@ -69,6 +69,10 @@ $(function() {
 });
 
 
+$(".chosen").chosen({
+  no_results_text: "Oops, nothing found!",
+  max_selected_options: 2,
+});
 
 
 });

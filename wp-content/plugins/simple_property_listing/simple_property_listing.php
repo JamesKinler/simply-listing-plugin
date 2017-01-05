@@ -637,6 +637,7 @@ class wp_simpley_realestate extends WP_Widget {
       $rooms = esc_attr($instance['roomCheckbox']);
       $theExcerpt = esc_attr($instance['excerptCheckbox']);
       $category = esc_attr($instance['category']);
+      $tags = esc_attr($instance['tags']);
 
 
 
@@ -649,47 +650,43 @@ class wp_simpley_realestate extends WP_Widget {
       $rooms = '';
       $theExcerpt = '';
       $category = '';
+      $tags = '';
     }
     ?>
   <p>
-        <div class="wprs__accordion">
-    <div class="wprs__accordion__section">
-      <div class="wprs__top__action">
-        <a class="wprs__action__indicator"href="#"></a>
-      </div>
-      <!-- <div class="wprs__accordion__title" data-fieldset="hello">
-        <h4><a href="#hello">Home Filters</a></h4>
-      </div> -->
-      <h4><a href="#hello" class="wprs__accordion__title">Home Filters</a></h4>
+    <div class="wprs__accordion">
+      <div class="wprs__accordion__section">
+        <h3 class="wprs__accordion__header"><a  class="wprs__accordion__section__title wprs__arrow"href="#wprs__accordion-1"
+          aria-hidden="true">Property Types Filters</a></h3>
+        <div class="wprs__accordion__section__content" id="wprs__accordion-1">
+              <p class="wprs__categories__discription">Use the following property listings to show what property listings you would like to display. You could select one property listing or all of them. </p>
+              <div class="wpsr__house__features">
+                <?php
+                  $category = (isset($instance['category']) ? array_map('absint', $instance['category']) : ["0"]);
+                  $terms = get_terms([
+                  'taxonomy' => 'property_types',
+                  ]);
+                  foreach($terms as $term) :
+                ?>
+                <label for="<?php echo $this->get_field_id('category'. $term->term_id) ; ?>" >
+                  <input  type="checkbox"
+                    id="<?php echo $this->get_field_id('category' . $term->term_id); ?>"
+                    name="<?php echo $this->get_field_name('category' . '[]'); ?>"
+                    <?php   if (isset($term->term_id)) {
+                              if (in_array($term->term_id,$category))
+                                  echo 'checked';
+                        };
+                    ?>
+                    value="<?php echo $term->term_id; ?>" />
+                    <?php echo $term->name ?>
+              </label>
+                  <?php endforeach; ?>
+            </div>
+        </div><!--end .accordion section content-->
+      </div><!--end .accordion section-->
+    </div><!--end .accordion-->
 
-          <div id="hello"class="wprs__accordion__section__content">
 
-
-                      <div class="wpsr__house__features">
-                          <?php
-                            $category = (isset($instance['category']) ? array_map('absint', $instance['category']) : ["0"]);
-                            $terms = get_terms([
-                              'taxonomy' => 'property_types',
-                              ]);
-                              foreach($terms as $term) :
-                          ?>
-                          <label for="<?php echo $this->get_field_id('category'. $term->term_id) ; ?>" >
-                          <input  type="checkbox"
-                              id="<?php echo $this->get_field_id('category' . $term->term_id); ?>"
-                              name="<?php echo $this->get_field_name('category' . '[]'); ?>"
-                              <?php   if (isset($term->term_id)) {
-                                          if (in_array($term->term_id,$category))
-                                              echo 'checked';
-                                          };
-                                      ?>
-                              value="<?php echo $term->term_id; ?>" />
-                              <?php echo $term->name ?>
-                          </label>
-                              <?php endforeach; ?>
-                        </div>
-        </div><!--end .accordion-section-content-->
-    </div><!--end .accordion-section-->
-</div><!--end .accordion-->
 
 
       <!-- you can choose how many posts you want to show -->
@@ -752,6 +749,7 @@ class wp_simpley_realestate extends WP_Widget {
     $instance['roomCheckbox'] = strip_tags($new_instance['roomCheckbox']);
     $instance['excerptCheckbox'] = strip_tags($new_instance['excerptCheckbox']);
     $instance['category'] =  (isset($new_instance['category']) ? array_map( 'absint', $new_instance['category']) : ["0"]);
+    $instance['tags'] =  (isset($new_instance['tags']) ? array_map( 'absint', $new_instance['tags']) : ["0"]);
   	return $instance;
   }
   // This is outputing everything in the widget
@@ -759,6 +757,7 @@ class wp_simpley_realestate extends WP_Widget {
 
       $numberOfListings = $instance['numberOfListings'];
       $category = $instance['category'];
+      $tags = $instance['tags'];
       print_r($category);
 
       $custom_post_category = $term_list[0]->term_id;
@@ -770,7 +769,12 @@ class wp_simpley_realestate extends WP_Widget {
             'taxonomy' => 'property_types',
             'field' => 'id',
             'terms' => $category,
-            ]]
+          ],
+        [
+          'taxonomy' => 'features_tags',
+          'field' => 'id',
+          'terms' => $tags,
+          ]]
 
         ];
         ?>

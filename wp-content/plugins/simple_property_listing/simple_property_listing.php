@@ -424,9 +424,19 @@ function myplugin_scripts(){
 
 
 
+
 }
 add_action( 'wp_enqueue_scripts', 'myplugin_scripts' );
 
+
+//customizer jquery
+
+function customizer_js(){
+  wp_register_script( 'admin_js', plugin_dir_url(__FILE__) . 'js/admin.js', array('jquery'), '', true);
+  wp_enqueue_script( 'admin_js');
+}
+
+add_action('customize_controls_enqueue_scripts', 'customizer_js');
 
 //this loads jquery into the admin panel
 
@@ -620,9 +630,12 @@ add_action('widgets_init', 'realestate_widget_init');
 class wp_simpley_realestate extends WP_Widget {
   public function __construct(){
     parent::__construct(
+
       'simpley_realestate_widget', //Base ID
       'Simpley Realesate Widget', //name
-      ['description' => __('Displays your latest listings')]
+      [
+        'description' => __('Displays your latest listings'),
+      ]
     );
   }
 
@@ -660,31 +673,35 @@ class wp_simpley_realestate extends WP_Widget {
           aria-hidden="true">Property Types Filters</a></h3>
         <div class="wprs__accordion__section__content" id="wprs__accordion-1">
               <p class="wprs__categories__discription">Use the following property listings to show what property listings you would like to display. You could select one property listing or all of them. </p>
-              <div class="wpsr__house__features">
-                <?php
-                  $category = (isset($instance['category']) ? array_map('absint', $instance['category']) : ["0"]);
-                  $terms = get_terms([
-                  'taxonomy' => 'property_types',
-                  ]);
-                  foreach($terms as $term) :
-                ?>
-                <label for="<?php echo $this->get_field_id('category'. $term->term_id) ; ?>" >
-                  <input  type="checkbox"
-                    id="<?php echo $this->get_field_id('category' . $term->term_id); ?>"
-                    name="<?php echo $this->get_field_name('category' . '[]'); ?>"
-                    <?php   if (isset($term->term_id)) {
-                              if (in_array($term->term_id,$category))
-                                  echo 'checked';
-                        };
+
+
+                  <div class="wpsr__house__features">
+                    <?php
+                      $category = (isset($instance['category']) ? array_map('absint', $instance['category']) : ["0"]);
+                      $terms = get_terms([
+                      'taxonomy' => 'property_types',
+                      ]);
+                      foreach($terms as $term) :
                     ?>
-                    value="<?php echo $term->term_id; ?>" />
-                    <?php echo $term->name ?>
-              </label>
-                  <?php endforeach; ?>
-            </div>
+                    <label for="<?php echo $this->get_field_id('category'. $term->term_id) ; ?>" >
+                      <input  type="checkbox"
+                        id="<?php echo $this->get_field_id('category' . $term->term_id); ?>"
+                        name="<?php echo $this->get_field_name('category' . '[]'); ?>"
+                        <?php   if (isset($term->term_id)) {
+                                  if (in_array($term->term_id,$category))
+                                      echo 'checked';
+                            };
+                        ?>
+                        value="<?php echo $term->term_id; ?>" />
+                        <?php echo $term->name ?>
+                  </label>
+                      <?php endforeach; ?>
+                </div>
+
         </div><!--end .accordion section content-->
       </div><!--end .accordion section-->
     </div><!--end .accordion-->
+
 
 
 
@@ -769,12 +786,7 @@ class wp_simpley_realestate extends WP_Widget {
             'taxonomy' => 'property_types',
             'field' => 'id',
             'terms' => $category,
-          ],
-        [
-          'taxonomy' => 'features_tags',
-          'field' => 'id',
-          'terms' => $tags,
-          ]]
+          ],]
 
         ];
         ?>

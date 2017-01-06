@@ -1,61 +1,74 @@
 .wpsr__house__features label{
   display: block;
+  padding: 2px 0;
+
 }
 
-
-.wprs__accordion, .wprs__accordion * {
-    -webkit-box-sizing:border-box;
-    -moz-box-sizing:border-box;
-    box-sizing:border-box;
+.wpsr__house__features{
+  margin: 5px 20px 20px 20px;
+  background: #fff none repeat scroll 0 0;
+  padding: 10px;
+  max-height: 150px;
+  overflow: auto;
+  border: solid 1px #ddd;
 }
-
 
 .wprs__accordion{
-  border-bottom:1px solid #beb9b9;
-  background-color:#ddd;
-  width:100%;
-  padding: 0px 20px;
-  transition:all linear 0.15s;
+  overflow:hidden;
+  background:#f7f7f7;
 }
 
-.wprs__accordion__title{
+.wprs__accordion__header{
+    margin: 0;
+}
+
+.wprs__categories__discription {
+    padding: 10px 25px;
+    color: #72777c;
+    font-size: .8em;
+    margin: 0;
+}
+
+.wprs__accordion__section {
+
+}
+
+.wprs__accordion__section__title{
+  width:224px;
+  padding:15px;
   display:inline-block;
-  font-size:1.200em;
+  background:#ddd;
+  transition:all linear 0.15s;
+  font-size:.8em;
+  text-decoration: none;
+  border: 1px solid #a0a5aa;
   color:#000;
-  text-decoration: none;
 }
 
-.wprs__accordion__title:hover{
-  color: #000;
+.wprs__accordion__section__title:hover{
+  color:#000;
 }
-
 .wprs__accordion__section__content{
-  padding:0 15px;
-  display:none;
+  display: none;
+  border-left: solid 1px #ccc;
+  border-bottom: solid 1px #ccc;
+  border-right: solid 1px #ccc;
+
+
 }
 
-.wprs__top__action{
-  float: right;
-  position: relative;
-}
 
-.wprs__action__indicator{
-  box-shadow: none;
-  color: inherit;
-  outline: medium none;
-  text-decoration: none;
-}
 
-a.wprs__action__indicator:after{
+.wprs__arrow:after{
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  float: right;
   border: 0 none;
   background: none;
-  content: "\f140";
+  content: '\f142';
   display: block;
-  font: normal 20px/1 dashicons;
-  margin-top: 17px;
-  margin-right: 0px;
+  font-family: dashicons;
+  font: 20px;
   padding: 1px 2px 1px 0px;
   position: relative;
   right: 0;
@@ -63,4 +76,32 @@ a.wprs__action__indicator:after{
   text-align: center;
   text-decoration: none !important;
   text-indent: 0;
+}
+
+.wprs__arrow__up:after{
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  float: right;
+  border: 0 none;
+  background: none;
+  content: '\f140';
+  display: block;
+  font-family: dashicons;
+  font: 20px;
+  padding: 1px 2px 1px 0px;
+  position: relative;
+  right: 0;
+  speak: none;
+  text-align: center;
+  text-decoration: none !important;
+  text-indent: 0;
+}
+
+
+
+
+
+.wp-person a:focus .gravatar, a:focus, a:focus .media-icon img{
+  box-shadow:0 0 0 0px #5b9dd9;
+  color:#000;
 }

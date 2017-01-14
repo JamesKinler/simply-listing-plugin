@@ -666,7 +666,7 @@ class wp_simpley_realestate extends WP_Widget {
       $tags = '';
     }
     ?>
-  <p>
+
     <div class="wprs__accordion">
       <div class="wprs__accordion__section">
         <h3 class="wprs__accordion__header"><a  class="wprs__accordion__section__title wprs__arrow"href="#wprs__accordion-1"
@@ -702,57 +702,127 @@ class wp_simpley_realestate extends WP_Widget {
       </div><!--end .accordion section-->
     </div><!--end .accordion-->
 
+    <div class="wprs__accordion">
+      <div class="wprs__accordion__section">
+        <h3 class="wprs__accordion__header"><a  class="wprs__accordion__section__title wprs__arrow"href="#wprs__accordion-2"
+          aria-hidden="true">Featuers Filters</a></h3>
+        <div class="wprs__accordion__section__content" id="wprs__accordion-2">
+              <p class="wprs__categories__discription">Use the following features to show what featuers  you would like to display. You could select one feature or all of them. </p>
+
+                  <div class="wpsr__house__features">
+                    <?php
+                      $tags = (isset($instance['tags']) ? array_map('absint', $instance['tags']) : ["0"]);
+                      $terms = get_terms([
+                      'taxonomy' => 'features_tags',
+                      ]);
+                      foreach($terms as $term) :
+                    ?>
+                    <label for="<?php echo $this->get_field_id('tags'. $term->term_id) ; ?>" >
+                      <input  type="checkbox"
+                        id="<?php echo $this->get_field_id('tags' . $term->term_id); ?>"
+                        name="<?php echo $this->get_field_name('tags' . '[]'); ?>"
+                        <?php   if (isset($term->term_id)) {
+                                  if (in_array($term->term_id,$tags))
+                                      echo 'checked';
+                            };
+                        ?>
+                        value="<?php echo $term->term_id; ?>" />
+                        <?php echo $term->name ?>
+                  </label>
+                      <?php endforeach; ?>
+                </div>
+
+        </div><!--end .accordion section content-->
+      </div><!--end .accordion section-->
+    </div><!--end .accordion-->
+
+    <div class="wprs__accordion">
+      <div class="wprs__accordion__section">
+        <h3 class="wprs__accordion__header"><a  class="wprs__accordion__section__title wprs__arrow"href="#wprs__accordion-3"
+          aria-hidden="true">Number Of Homes Display</a></h3>
+        <div class="wprs__accordion__section__content" id="wprs__accordion-3">
+              <p class="wprs__categories__discription">Use the following to choose how many homes you want to display.
+                <!-- you can choose how many posts you want to show -->
+              <select id="<?php echo $this->get_field_id('numberOfListings'); ?>"  name="<?php echo $this->get_field_name('numberOfListings'); ?>">
+                <?php for($x='';$x<=10;$x++): ?>
+                <option <?php echo $x == $numberOfListings ? 'selected="selected"' : '';?> value="<?php echo $x;?>"><?php echo $x; ?></option>
+                <?php endfor;?>
+              </select>
+              </p>
+        </div><!--end .accordion section content-->
+      </div><!--end .accordion section-->
+    </div><!--.accordion-->
+
+    <div class="wprs__accordion">
+      <div class="wprs__accordion__section">
+        <h3 class="wprs__accordion__header"><a  class="wprs__accordion__section__title wprs__arrow"href="#wprs__accordion-4"
+          aria-hidden="true">Display Items </a></h3>
+        <div class="wprs__accordion__section__content" id="wprs__accordion-4">
+              <p class="wprs__categories__discription">Select What Items You Want To Display.
+                <!-- you can choose how many posts you want to show -->
+                <div class="wpsr__house__features">
+
+                  <!-- this is the label input checkbox for image to be displayed if checked it will display the image -->
+                  <label for="<?php echo $this->get_field_id('ImagecheckBox'); ?>">
+                    <input id="<?php echo $this->get_field_id('ImagecheckBox'); ?>"
+                          name="<?php echo esc_attr($this->get_field_name('ImagecheckBox'));?>"
+                          type="checkbox" value="1"
+                          <?php checked('1', $imagecheckbox); ?>/>
+                          <?php _e(' Image', 'simpley_realestate_widget')?>
+                    </label>
 
 
+                    <!-- this is the label input checkbox for the title of the listing to be displayed if checked it will display the image -->
+                    <label for="<?php echo $this->get_field_id('headerCheckbox'); ?>">
+                      <input id="<?php echo $this->get_field_id('headerCheckbox'); ?>"
+                              name="<?php echo esc_attr($this->get_field_name('headerCheckbox'));?>"
+                              type="checkbox" value="1"
+                              <?php checked('1', $theTitle); ?>/>
+                              <?php _e(' Header', 'simpley_realestate_widget')?>
+                      </label>
 
 
-      <!-- you can choose how many posts you want to show -->
-    <label for="<?php echo $this->get_field_id('numberOfListings'); ?>"><?php _e('Number of Listings:', 'simpley_realestate_widget'); ?></label>
-    <select id="<?php echo $this->get_field_id('numberOfListings'); ?>"  name="<?php echo $this->get_field_name('numberOfListings'); ?>">
-			<?php for($x='';$x<=10;$x++): ?>
-			<option <?php echo $x == $numberOfListings ? 'selected="selected"' : '';?> value="<?php echo $x;?>"><?php echo $x; ?></option>
-			<?php endfor;?>
-		</select>
-    </br>
-    </br>
+                        <!-- this is the label input checkbox for street to be displayed if checked it will display the image -->
+                        <label for="<?php echo $this->get_field_id('streetCheckbox'); ?>">
+                          <input id="<?php echo $this->get_field_id('streetCheckbox'); ?>"
+                                  name="<?php echo esc_attr($this->get_field_name('streetCheckbox'));?>"
+                                  type="checkbox" value="1"
+                                  <?php checked('1', $street); ?>/>
+                                  <?php _e(' Address', 'simpley_realestate_widget')?>
+                        </label>
 
-    <!-- this is the label input checkbox for image to be displayed if checked it will display the image -->
-    <label for="<?php echo $this->get_field_id('ImagecheckBox'); ?>"><?php _e(' Check the box if you want the image to be displayed:', 'simpley_realestate_widget')?></label>
-    <input id="<?php echo $this->get_field_id('ImagecheckBox'); ?>" name="<?php echo esc_attr($this->get_field_name('ImagecheckBox'));?>" type="checkbox" value="1" <?php checked('1', $imagecheckbox); ?>/>
-    </br>
-    </br>
 
-    <!-- this is the label input checkbox for the title of the listing to be displayed if checked it will display the image -->
-    <label for="<?php echo $this->get_field_id('headerCheckbox'); ?>"><?php _e(' Check the box if you want the title to be displayed:', 'simpley_realestate_widget')?></label>
-    <input id="<?php echo $this->get_field_id('headerCheckbox'); ?>" name="<?php echo esc_attr($this->get_field_name('headerCheckbox'));?>" type="checkbox" value="1" <?php checked('1', $theTitle); ?>/>
-    </br>
-    </br>
+                        <!-- this is the label input checkbox for price to be displayed if checked it will display the image -->
+                        <label for="<?php echo $this->get_field_id('priceCheckbox'); ?>">
+                            <input id="<?php echo $this->get_field_id('priceCheckbox'); ?>"
+                                    name="<?php echo esc_attr($this->get_field_name('priceCheckbox'));?>"
+                                    type="checkbox" value="1"
+                                    <?php checked('1', $price); ?>/>
+                                    <?php _e(' Price', 'simpley_realestate_widget')?>
+                        </label>
+                        <!-- this is the label input checkbox for bedroom and bathroom to be displayed if checked it will display the image -->
+                        <label for="<?php echo $this->get_field_id('roomCheckbox'); ?>">
+                          <input id="<?php echo $this->get_field_id('roomCheckbox'); ?>"
+                                  name="<?php echo esc_attr($this->get_field_name('roomCheckbox'));?>"
+                                  type="checkbox" value="1"
+                                  <?php checked('1', $rooms); ?>/>
+                                  <?php _e('Bed & Bath')?>
+                        </label>
 
-    <!-- this is the label input checkbox for street to be displayed if checked it will display the image -->
-    <label for="<?php echo $this->get_field_id('streetCheckbox'); ?>"><?php _e(' Check the box if you want the address to be displayed:', 'simpley_realestate_widget')?></label>
-    <input id="<?php echo $this->get_field_id('streetCheckbox'); ?>" name="<?php echo esc_attr($this->get_field_name('streetCheckbox'));?>" type="checkbox" value="1" <?php checked('1', $street); ?>/>
-    </br>
-    </br>
+                        <!-- this is the label input checkbox for excerpt to be displayed if checked it will display the image -->
+                      <label for="<?php echo $this->get_field_id('excerptCheckbox'); ?>">
+                        <input id="<?php echo $this->get_field_id('excerptCheckbox'); ?>"
+                                name="<?php echo esc_attr($this->get_field_name('excerptCheckbox'));?>"
+                                type="checkbox" value="1"
+                                <?php checked('1', $theExcerpt); ?>/>
+                                <?php _e('Excerpt', 'simpley_realestate_widget')?>
+                    </label>
+                </div>
+              </p>
+        </div><!--end .accordion section content-->
+      </div><!--end .accordion section-->
+    </div><!--.accordion-->
 
-    <!-- this is the label input checkbox for price to be displayed if checked it will display the image -->
-    <label for="<?php echo $this->get_field_id('priceCheckbox'); ?>"><?php _e(' Check the box if you want the price to be displayed:', 'simpley_realestate_widget')?></label>
-    <input id="<?php echo $this->get_field_id('priceCheckbox'); ?>" name="<?php echo esc_attr($this->get_field_name('priceCheckbox'));?>" type="checkbox" value="1" <?php checked('1', $price); ?>/>
-    </br>
-    </br>
-
-    <!-- this is the label input checkbox for bedroom and bathroom to be displayed if checked it will display the image -->
-    <label for="<?php echo $this->get_field_id('roomCheckbox'); ?>"><?php _e(' Check the box if you want the bedroom and bathrooms to be displayed:', 'simpley_realestate_widget')?></label>
-    <input id="<?php echo $this->get_field_id('roomCheckbox'); ?>" name="<?php echo esc_attr($this->get_field_name('roomCheckbox'));?>" type="checkbox" value="1" <?php checked('1', $rooms); ?>/>
-    </br>
-    </br>
-
-    <!-- this is the label input checkbox for excerpt to be displayed if checked it will display the image -->
-    <label for="<?php echo $this->get_field_id('excerptCheckbox'); ?>"><?php _e(' Check the box if you want an excpert to be displayed:', 'simpley_realestate_widget')?></label>
-    <input id="<?php echo $this->get_field_id('excerptCheckbox'); ?>" name="<?php echo esc_attr($this->get_field_name('excerptCheckbox'));?>" type="checkbox" value="1" <?php checked('1', $theExcerpt); ?>/>
-    </br>
-    </br>
-
-  </p>
   <?php
   }
   //This function is about updating the widget when adding a new instance
@@ -775,18 +845,24 @@ class wp_simpley_realestate extends WP_Widget {
       $numberOfListings = $instance['numberOfListings'];
       $category = $instance['category'];
       $tags = $instance['tags'];
-      print_r($category);
 
       $custom_post_category = $term_list[0]->term_id;
         $query_args = [
           'post_type' => 'realestate_listings',
           'posts_per_page' => $numberOfListings,
           'order' => 'date',
-          'tax_query' => [[
+          'tax_query' => [
+            [
             'taxonomy' => 'property_types',
             'field' => 'id',
             'terms' => $category,
-          ],]
+          ],
+          [
+            'taxonomy' => 'features_tags',
+            'field' => 'id',
+            'terms' => $tags,
+          ]
+        ]
 
         ];
         ?>

@@ -15,11 +15,12 @@
 
 .wprs__accordion{
   overflow:hidden;
-  background:#f7f7f7;
+
 }
 
 .wprs__accordion__header{
     margin: 0;
+    padding: 6px 0 10px 0;
 }
 
 .wprs__categories__discription {
@@ -53,6 +54,7 @@
   border-left: solid 1px #ccc;
   border-bottom: solid 1px #ccc;
   border-right: solid 1px #ccc;
+  background:#f7f7f7;
 
 
 }

@@ -7,5 +7,5 @@
 </head>
 
 <header>
-  <img src="http://s.hswstatic.com/gif/mansions-quiz-96546919.jpg" alt="" />
+  <img class="img-responsive"src="http://s.hswstatic.com/gif/mansions-quiz-96546919.jpg" alt="" />
 </header>
